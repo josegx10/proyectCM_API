@@ -45,7 +45,16 @@ app.get("/citas", async (req, res) => {
 
   return res.json(data);
 });
+app.get("/citas/:fecha/:hora", async (req, res) => {
+  const [data] = await pool.query(
+    `select * from citas where fecha = '${req.params.fecha}' && hora = '${req.params.hora}'`
+  );
+  if (data.length == 0) {
+    return res.sendStatus(200);
+  }
 
+  return res.sendStatus(404);
+});
 app.post("/citas", async (req, res) => {
   if ((await buscar(req.body.fecha, req.body.hora)) > 0) {
     return res.sendStatus(404);
