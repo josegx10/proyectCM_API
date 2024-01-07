@@ -136,7 +136,22 @@ app.delete("/citas/all/:id", async (req, res) => {
     data,
   });
 });
-
+app.get("/clientes/", async (req, res) => {
+  const { telefono, contrasenia } = req.query;
+  const [data] = await pool.query(
+    "SELECT * FROM clientes WHERE telefono = ? && password = ?",
+    [telefono, contrasenia]
+  );
+  res.json(data);
+});
+app.post("/clientes", async (req, res) => {
+  const { nombre, telefono, password } = req.body;
+  const data = await pool.query(
+    "INSERT INTO clientes (nombre, telefono, password) VALUES (?, ?, ?)",
+    [nombre, telefono, password]
+  );
+  res.json(data);
+});
 app.listen(port, () => {
   console.log("server iniciado");
 });
