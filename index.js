@@ -144,8 +144,25 @@ app.get("/clientes/", async (req, res) => {
   );
   res.json(data);
 });
+app.get("/clientes/:telefono", async (req, res) => {
+  const { telefono } = req.params;
+  const [data] = await pool.query("SELECT * FROM clientes WHERE telefono = ?", [
+    telefono,
+  ]);
+  res.json(data);
+});
+async function buscarTelefono(telefono) {
+  const [data] = await pool.query("SELECT * FROM clientes WHERE telefono = ?", [
+    telefono,
+  ]);
+  return data;
+}
 app.post("/clientes", async (req, res) => {
   const { nombre, telefono, password } = req.body;
+  const checar = await buscarTelefono(telefono);
+  if (checar.length > 0) {
+    return res.sendStatus(300);
+  }
   const data = await pool.query(
     "INSERT INTO clientes (nombre, telefono, password) VALUES (?, ?, ?)",
     [nombre, telefono, password]
